@@ -1,0 +1,31 @@
+<div class="shell">
+  <header class="topbar"><div class="brand"><div class="logo">M</div><div><strong>MerchantPortal</strong><small>Merchant operations & insights</small></div></div><span class="environment">DEMO WORKSPACE</span></header>
+  <main>
+    <section class="welcome"><div><p class="eyebrow">OVERVIEW</p><h1>Merchant operations</h1><p class="muted">Onboard merchants, monitor performance, and keep operations consistent.</p></div><button mat-raised-button color="primary" (click)="refresh()">Refresh data ↻</button></section>
+    <section class="stats">
+      <mat-card class="stat"><span>Total merchants</span><strong>{{summary.totalMerchants ?? merchants.length}}</strong><small>All registered merchants</small></mat-card>
+      <mat-card class="stat"><span>Active merchants</span><strong>{{summary.activeMerchants ?? 0}}</strong><small class="green">Approved and active</small></mat-card>
+      <mat-card class="stat"><span>Pending review</span><strong>{{summary.pendingMerchants ?? 0}}</strong><small>Awaiting verification</small></mat-card>
+      <mat-card class="stat"><span>Chargeback rate</span><strong>{{summary.chargebackRate ?? 0.42}}%</strong><small>Demo analytics metric</small></mat-card>
+    </section>
+    <section class="content-grid">
+      <mat-card class="panel"><div class="panel-head"><div><h2>Merchant onboarding</h2><p class="muted">Add a merchant to the workspace</p></div><span class="step-pill">3 steps</span></div>
+        <mat-horizontal-stepper linear>
+          <mat-step [stepControl]="form.controls.name"><ng-template matStepLabel>Business</ng-template><form [formGroup]="form"><mat-form-field appearance="outline"><mat-label>Merchant / business name</mat-label><input matInput formControlName="name"><mat-error *ngIf="form.controls.name.hasError('required')">Name is required</mat-error><mat-error *ngIf="form.controls.name.hasError('nameTaken')">This name is already registered</mat-error></mat-form-field><button mat-raised-button color="primary" matStepperNext [disabled]="form.controls.name.invalid || form.controls.name.pending">Continue</button></form></mat-step>
+          <mat-step [stepControl]="form.controls.email"><ng-template matStepLabel>Contact</ng-template><form [formGroup]="form"><mat-form-field appearance="outline"><mat-label>Contact email</mat-label><input matInput formControlName="email" type="email"><mat-error>Enter a valid email</mat-error></mat-form-field><button mat-button matStepperPrevious>Back</button><button mat-raised-button color="primary" matStepperNext [disabled]="form.controls.email.invalid">Continue</button></form></mat-step>
+          <mat-step [stepControl]="form.controls.category"><ng-template matStepLabel>Category</ng-template><form [formGroup]="form"><mat-form-field appearance="outline"><mat-label>Business category</mat-label><mat-select formControlName="category"><mat-option value="Retail">Retail</mat-option><mat-option value="Services">Services</mat-option><mat-option value="Digital">Digital products</mat-option><mat-option value="Hospitality">Hospitality</mat-option></mat-select></mat-form-field><button mat-button matStepperPrevious>Back</button><button mat-raised-button color="primary" (click)="submit()" [disabled]="busy || form.invalid">{{busy ? 'Submitting…' : 'Submit merchant'}}</button></form></mat-step>
+        </mat-horizontal-stepper>
+        <p class="success" *ngIf="notice">{{notice}}</p><p class="error" *ngIf="error">{{error}}</p>
+      </mat-card>
+      <mat-card class="panel analytics"><div class="panel-head"><div><h2>Transaction analytics</h2><p class="muted">Illustrative dashboard data</p></div><span class="trend">↗ 12.8%</span></div>
+        <div class="volume"><span>Transaction volume</span><strong>£{{(summary.transactionVolume ?? 125430.75) | number:'1.0-0'}}</strong><small>Sample reporting period</small></div>
+        <div class="chart"><div class="bar-wrap" *ngFor="let value of (summary.volumeTrend || [42,48,45,63,58,72,81]); let i = index"><div class="bar" [style.height.%]="value"></div><small>{{['M','T','W','T','F','S','S'][i]}}</small></div></div>
+        <div class="category-list"><div><span><i class="dot retail"></i>Retail</span><strong>46%</strong></div><div><span><i class="dot services"></i>Services</span><strong>31%</strong></div><div><span><i class="dot digital"></i>Digital</span><strong>23%</strong></div></div>
+      </mat-card>
+    </section>
+    <mat-card class="panel table-panel"><div class="panel-head"><div><h2>Merchant directory</h2><p class="muted">Recently registered businesses</p></div><span class="count">{{merchants.length}} records</span></div>
+      <div class="table-scroll"><table><thead><tr><th>MERCHANT</th><th>CATEGORY</th><th>EMAIL</th><th>STATUS</th><th>CREATED</th></tr></thead><tbody><tr *ngFor="let m of merchants"><td><div class="merchant-cell"><span class="avatar">{{m.name.charAt(0).toUpperCase()}}</span><strong>{{m.name}}</strong></div></td><td>{{m.category}}</td><td>{{m.email}}</td><td><span class="status" [class.active]="m.status === 'ACTIVE'">{{m.status}}</span></td><td>{{m.createdAt | date:'mediumDate'}}</td></tr><tr *ngIf="!merchants.length"><td colspan="5" class="empty">No merchants yet. Add your first merchant above.</td></tr></tbody></table></div>
+    </mat-card>
+    <footer>MerchantPortal <span>·</span> Demo data is illustrative and not production telemetry.</footer>
+  </main>
+</div>
